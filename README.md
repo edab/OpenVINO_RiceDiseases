@@ -14,6 +14,10 @@ Although the _OpenVINO™ Toolkit_ comes with a large number of pre-trained and 
 - Convert the trained model to the ONNX format
 - Use the Intel OpenVINO toolkit for optimize the model for _IoT AI Edge application_
 
+### Transfer Learning with PyTorch Framework
+
+A PyTorch CNN model using GoogleNet to classify rice diseases. Total dataset is 3355 images. It is splitted into 80% training, 10% validation and 10% testing dataset. The testing accuracy using GoogleNet is 97%.
+
 ### What is AI at the Edge?
 
 The ***Edge*** means local (or near local) processing, as opposed to just anywhere in the cloud. This can be an actual local device like a smart refrigerator, or servers located as close as possible to the source (i.e. servers located in a nearby area instead of on the other side of the world).
