@@ -1,19 +1,50 @@
 import argparse
 import time
-
+import os, random
 import cv2
 import numpy as np
+from glob import glob
 
 from openvino.inference_engine import IENetwork, IECore
 
 CPU_EXTENSION = "/opt/intel/openvino/deployment_tools/inference_engine/lib/intel64/libcpu_extension_sse4.so"
-RICE_MODEL = "models/rice_model.xml"
-RICE_WEIGHTS = "models/rice_model.bin"
+
+RICE_MODEL = "models/rice_model_1_batch.xml"
+RICE_WEIGHTS = "models/rice_model_1_batch.bin"
+
+DATADIR="dataset/rice-diseases-image-dataset/LabelledRice/Labelled/"
 
 HEALTY_IMG="dataset/rice-diseases-image-dataset/LabelledRice/Labelled/Healthy/IMG_3108.jpg"
 BROWNSPOT_IMG="dataset/rice-diseases-image-dataset/LabelledRice/Labelled/BrownSpot/IMG_20190420_185845.jpg"
 HISPA_IMG="dataset/rice-diseases-image-dataset/LabelledRice/Labelled/Hispa/IMG_20190419_095802.jpg"
 LEAFBLAST_IMG="dataset/rice-diseases-image-dataset/LabelledRice/Labelled/LeafBlast/IMG_3009.jpg"
+
+def get_dataset():
+
+    # Check the number of images present
+    images = glob(os.path.join(DATADIR, '*/*.jpg'))
+    tot_images = len(images)
+    print('Total images:', tot_images)
+
+    # Populate the class name list
+    tot_images = 3355
+    im_cnt = []
+    class_names = []
+    print('{:18s}'.format('Class'), end='')
+    print('Count')
+    print('-' * 24)
+    for folder in os.listdir(os.path.join(DATADIR)):
+        folder_num = len(os.listdir(os.path.join(DATADIR, folder)))
+        im_cnt.append(folder_num)
+        class_names.append(folder)
+        print('{:20s}'.format(folder), end=' ')
+        print(folder_num)
+        if (folder_num < tot_images):
+            tot_images = folder_num
+            folder_num = folder
+
+    num_classes = len(class_names)
+    print('Total number of classes: {}'.format(num_classes))
 
 def get_args():
     '''
@@ -21,13 +52,16 @@ def get_args():
     '''
     parser = argparse.ArgumentParser("Run inference on an input video")
 
+    # Pick input files
+    get_dataset()
+
     # Create the descriptions for the commands
     p_desc = "The location of the input file (default: random image from dataset)"
     i_desc = "The type of input: 0 = camera, 'IMAGE', 'VIDEO' (default: 'IMAGE')"
     d_desc = "Target device: CPU, GPU, FPGA, MYRIAD, MULTI:CPU,GPU, HETERO:FPGA,CPU (default: 'CPU')"
 
     # Create the arguments
-    parser.add_argument("-p", help=i_desc, default=HEALTY_IMG)
+    parser.add_argument("-p", help=i_desc, default=BROWNSPOT_IMG)
     parser.add_argument("-i", help=i_desc, default='IMAGE')
     parser.add_argument("-d", help=d_desc, default='CPU')
     args = parser.parse_args()
@@ -101,8 +135,9 @@ def run_app(args):
 
         fps = 1./(end-start)
         print('Estimated FPS: {} FPS'.format(fps))
-        print(results['562'][1])
-        index = np.where(results['562'][1] == np.amax(results['562'][1]))
+        print(results['562'])
+        index = np.where(results['562'] == np.amax(results['562']))
+        print(index)
         res = np.asscalar(index[0])
 
         fh = image.shape[0]
