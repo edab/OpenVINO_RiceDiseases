@@ -14,10 +14,10 @@ RICE_WEIGHTS = "models/rice_model_1_batch.bin"
 
 DATADIR="dataset/rice-diseases-image-dataset/LabelledRice/Labelled/"
 
-HEALTY_IMG="dataset/rice-diseases-image-dataset/LabelledRice/Labelled/Healthy/IMG_3108.jpg"
-BROWNSPOT_IMG="dataset/rice-diseases-image-dataset/LabelledRice/Labelled/BrownSpot/IMG_20190420_185845.jpg"
-HISPA_IMG="dataset/rice-diseases-image-dataset/LabelledRice/Labelled/Hispa/IMG_20190419_095802.jpg"
-LEAFBLAST_IMG="dataset/rice-diseases-image-dataset/LabelledRice/Labelled/LeafBlast/IMG_3009.jpg"
+IMGS = ["dataset/rice-diseases-image-dataset/LabelledRice/Labelled/Healthy/IMG_3108.jpg",
+        "dataset/rice-diseases-image-dataset/LabelledRice/Labelled/BrownSpot/IMG_20190420_185845.jpg",
+        "dataset/rice-diseases-image-dataset/LabelledRice/Labelled/Hispa/IMG_20190419_095802.jpg",
+        "dataset/rice-diseases-image-dataset/LabelledRice/Labelled/LeafBlast/IMG_3009.jpg"]
 
 def get_dataset():
 
@@ -61,7 +61,7 @@ def get_args():
     d_desc = "Target device: CPU, GPU, FPGA, MYRIAD, MULTI:CPU,GPU, HETERO:FPGA,CPU (default: 'CPU')"
 
     # Create the arguments
-    parser.add_argument("-p", help=i_desc, default=BROWNSPOT_IMG)
+    parser.add_argument("-p", help=i_desc, default=IMGS[random.randint(0,3)])
     parser.add_argument("-i", help=i_desc, default='IMAGE')
     parser.add_argument("-d", help=d_desc, default='CPU')
     args = parser.parse_args()
@@ -97,7 +97,50 @@ def load_network():
 
     return N, C, H, W, Network
 
+def pre_process(image, C, W, H):
+    # Original transformation is:
+    #   transform = cvtransforms.Compose([
+    #     cvtransforms.Resize(225),
+    #     cvtransforms.CenterCrop(224),
+    #     cvtransforms.ToTensor(),
+    #     cvtransforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
+    #   ])
+
+    print("Input image transformation")
+
+    print('  - Size: {}'.format(image.shape))
+    print('  - Type: {}'.format(type(image)))
+    print('  - Type: %s' % image.dtype)
+    print('  - Min: %.3f' % (image.min()))
+    print('  - Max: %.3f' % (image.max()))
+
+    print("  Normalizing image")
+
+    # Convert from integers to floats
+    normalized = image.astype('float32')
+
+    # Normalize using the same values used on Tensorflow for train the model
+    normalized /= 255.0
+    normalized -= [0.485, 0.456, 0.406]
+    normalized /= [0.229, 0.224, 0.225]
+
+    print("  Resize to {} x {}".format(W, H))
+
+    # Resize the model
+    resized = cv2.resize(normalized, (W, H))
+
+    print("  Reshaping: {}".format(resized.shape))
+
+    # Change data layout from HWC to CHW
+    resized = resized.transpose((2, 0, 1))
+
+    return resized.reshape((C, H, W))
+
 def run_app(args):
+
+    classes = ['Brown spot', 'Hispa', 'Leaf blast', 'Healty']
+
+    random.seed(time.time())
 
     # Load IECore Object
     OpenVinoIE = IECore()
@@ -109,7 +152,6 @@ def run_app(args):
         OpenVinoIE.add_extension(CPU_EXTENSION, 'CPU')
 
     # Load Networkprint(N, C, H, W)
-
     N, C, H, W, Network = load_network()
 
     # Load Executable Network
@@ -121,36 +163,35 @@ def run_app(args):
         image = cv2.imread(args.p)
 
         # Pre-process Image
-        resized = cv2.resize(image, (W, H))
-        resized = resized.transpose((2, 0, 1))  # Change data layout from HWC to CHW
-        print("resized shape: {}".format(resized.shape))
-        input_image = resized.reshape((C, H, W))
+        input_image = pre_process(image, C, W, H)
 
         # Start Inference
         start = time.time()
         results = ExecutableNetwork.infer(inputs={'x.1': input_image})
+        index = results['562'].argmax()
         end = time.time()
-        inf_time = end - start
-        print('Inference Time: {} Seconds'.format(inf_time))
+        inf_time = (end - start) * 1000
+        print('Inference Time: {} ms'.format(inf_time))
 
-        fps = 1./(end-start)
-        print('Estimated FPS: {} FPS'.format(fps))
-        print(results['562'])
-        index = np.where(results['562'] == np.amax(results['562']))
-        print(index)
-        res = np.asscalar(index[0])
+        print('Results: {}'.format(results['562']))
+        print('Type: {}'.format(type(results['562'])))
+        print('Min: {}'.format(results['562'].argmin()))
+        print('Max: {}'.format(results['562'].argmax()))
+        print('Val: \'{}\' [{}]'.format(classes[index], index))
 
         fh = image.shape[0]
         fw = image.shape[1]
 
         # Write Information on Image
         imS = cv2.resize(image, (960, 540))                    # Resize image
-        text = 'FPS: {}, INF: {}, IDX: {}'.format(round(fps, 2), round(inf_time, 2), res)
+        text = 'Inf: {} ms, IDX: {} [{}]'.format(round(inf_time, 1), classes[index], index)
         cv2.putText(imS, text, (0, 20), cv2.FONT_HERSHEY_COMPLEX, 0.6, (0, 125, 255), 1)
 
-        cv2.namedWindow("OpenVINO Rice Diseases")        # Create a named window
-        cv2.moveWindow("OpenVINO Rice Diseases", 40,30)  # Move it to (40,30)
+        # Show original image and prediction
+        cv2.namedWindow("OpenVINO Rice Diseases")         # Create a named window
+        cv2.moveWindow("OpenVINO Rice Diseases", 40, 30)  # Move it to (40,30)
         cv2.imshow("OpenVINO Rice Diseases", imS)
+        #cv2.imshow("OpenVINO Rice Diseases", input_image.transpose((1,2,0)))
         cv2.waitKey(0)
         cv2.destroyAllWindows()
 
