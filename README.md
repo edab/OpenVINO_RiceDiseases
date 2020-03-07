@@ -20,7 +20,6 @@ The size of the dataset is 3355. The dataset was splitted into training dataset 
 
 The first attempt was using DenseNet 201 (learning rate of 0.01) and froze all the weights from the pretrained network. The accuracy was very poor, around 50%. Then, with another model, VGG16 (learning rate 0.01) and froze all the weights from the pretrained network, accuracy was 39%. ResNet 50 showed the same poor accuracy of 50%. It showed that the dataset is totally different from original image database. To improve the accuracy, the weight parameter of the pretrained network was not frozen.
 
-# Freeze training for all 'features' layers
 for param in model_transfer.features.parameters():
     param.requires_grad=False
     
