@@ -1,4 +1,5 @@
 [RiceDiseases]: images/RiceDiseases.png "Rice Diseases"
+[Screenshot]: images/InferScreenshot.png "Current app infer screenshot"
 
 # OpenVINO Rice Disease
 
@@ -42,12 +43,16 @@ The **Rice Diseases Image Dataset** used for this project is available at [Kaggl
 
 ### Model developed
 
+## Current application Screen shot
+
+The current application is able to infer on single images and write the class identified and the inter time in ms.
+
+![Screenshot]
+
 ## Quickstart
 
-
-### Raspberry Pi and NC2 setup
 
 
 ## References
 - [Kaggle rice diseases dataset](https://www.kaggle.com/minhhuy2810/rice-diseases-image-dataset)
-- [](https://docs.openvinotoolkit.org/latest/_docs_install_guides_installing_openvino_raspbian.html)
+- [OpenVINO installation guide](https://docs.openvinotoolkit.org/latest/_docs_install_guides_installing_openvino_raspbian.html)
