@@ -15,18 +15,6 @@ Although the _OpenVINO™ Toolkit_ comes with a large number of pre-trained and 
 - Convert the trained model to the ONNX format
 - Use the Intel OpenVINO toolkit for optimize the model for _IoT AI Edge application_
 
-### Transfer Learning with PyTorch Framework
-The size of the dataset is 3355. The dataset was splitted into training dataset 80%(2684), validation 10%(335), and testing 10%(336).
-
-The first attempt was using DenseNet 201 (learning rate of 0.01) and froze all the weights from the pretrained network. The accuracy was very poor, around 50%. Then, with another model, VGG16 (learning rate 0.01) and froze all the weights from the pretrained network, accuracy was 39%. ResNet 50 showed the same poor accuracy of 50%. It showed that the dataset is totally different from original image database. To improve the accuracy, the weight parameter of the pretrained network was not frozen. 
-
-```
-# Freeze training for all 'features' layers
-for param in model_transfer.features.parameters():
-    param.requires_grad=True
-```
-Set the param.requires_grad to True and the accuracy increased to 80%. In this competition, we submitted the training model using GoogleNet, as it has the highest accuracy of 97%.
-
 ### What is AI at the Edge?
 
 The ***Edge*** means local (or near local) processing, as opposed to just anywhere in the cloud. This can be an actual local device like a smart refrigerator, or servers located as close as possible to the source (i.e. servers located in a nearby area instead of on the other side of the world).
@@ -49,7 +37,24 @@ The **Rice Diseases Image Dataset** used for this project is available at [Kaggl
 
 ![RiceDiseases]
 
-### Model developed
+### Transfer Learning with PyTorch Framework
+
+The size of the dataset is 3355. The dataset was splitted into training dataset 80%(2684), validation 10%(335), and testing 10%(336).
+
+The first attempt was using DenseNet 201 (learning rate of 0.01) and froze all the weights from the pretrained network. The accuracy was very poor, around 50%. Then, with another model, VGG16 (learning rate 0.01) and froze all the weights from the pretrained network, accuracy was 39%. ResNet 50 showed the same poor accuracy of 50%. It showed that the dataset is totally different from original image database. To improve the accuracy, the weight parameter of the pretrained network was not frozen.
+
+```
+# Freeze training for all 'features' layers
+for param in model_transfer.features.parameters():
+    param.requires_grad=True
+```
+Set the param.requires_grad to True and the accuracy increased to 80%. In this competition, we submitted the training model using GoogleNet, as it has the highest accuracy of 97%.
+
+### Application Inference
+
+Once the model was successfully converted into the _OpenVINO Toolkit Intermediate Representation (IR)_, the code for making the actual inference was added smoothly.
+
+The only **critical** point is that the same transformation used for the input images during the training process, should be now applied using OpenCV to the input frames, permitting the optimized model to work on the same way he was trained.
 
 ## Current application Screen shot
 

@@ -184,7 +184,7 @@ def run_app(args):
 
         # Write Information on Image
         imS = cv2.resize(image, (960, 540))                    # Resize image
-        text = 'Inf: {} ms, IDX: {}'.format(round(inf_time, 1), classes[index])
+        text = 'Inf: {} ms, Disease: {}'.format(round(inf_time, 1), classes[index])
         cv2.putText(imS, text, (0, 20), cv2.FONT_HERSHEY_COMPLEX, 0.6, (0, 125, 255), 1)
 
         # Show original image and prediction
