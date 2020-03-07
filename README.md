@@ -16,8 +16,15 @@ Although the _OpenVINO™ Toolkit_ comes with a large number of pre-trained and 
 - Use the Intel OpenVINO toolkit for optimize the model for _IoT AI Edge application_
 
 ### Transfer Learning with PyTorch Framework
+The size of the dataset is 3355. I splitted the dataset into training dataset 80%(2684), validation 10%(335), and testing 10%(336).
 
-A PyTorch CNN model using GoogleNet to classify rice diseases. Total dataset is 3355 images. It is splitted into 80% training, 10% validation and 10% testing dataset. The testing accuracy using GoogleNet is 97%.
+The first attempt was using DenseNet 201 (learning rate of 0.01) and froze all the weights from the pretrained network. The accuracy was very poor, around 50%. Then, with another model, VGG16 (learning rate 0.01) and froze all the weights from the pretrained network, accuracy was 39%. ResNet 50 showed the same poor accuracy of 50%. It showed that the dataset is totally different from original image database. To improve the accuracy, the weight parameter of the pretrained network was not frozen.
+
+# Freeze training for all 'features' layers
+for param in model_transfer.features.parameters():
+    param.requires_grad=False
+    
+Set the param.requires_grad to True and the accuracy increased to 80%. In this competition, we submitted the training model using GoogleNet, as it has the highest accuracy of 97%.
 
 ### What is AI at the Edge?
 
@@ -51,24 +58,8 @@ The current application is able to infer on single images and write the class id
 
 ## Quickstart
 
-This tool is based on Python3 and OpenVINO toolkit, you can use the [original guide from Intel](https://docs.openvinotoolkit.org/latest/_docs_install_guides_installing_openvino_raspbian.html) for install it.
 
-
-## Usage
-
-For run the application, you can use the following command:
-
-```bash
-source /opt/intel/openvino/bin/setupvars.sh
-
-python3 sneeze-cough.py [-h] [-p P] [-i I] [-d D]
-
-The optional arguments are:
-  -h, --help  show this help message and exit
-  -p P        The location of the input file (default: random image from dataset)
-  -i I        The type of input: 0 = camera, 'IMAGE', 'VIDEO' (default: 'IMAGE')
-  -d D        Target device: CPU, GPU, FPGA, MYRIAD, MULTI:CPU,GPU, HETERO:FPGA, CPU (default: 'CPU')
-```
 
 ## References
 - [Kaggle rice diseases dataset](https://www.kaggle.com/minhhuy2810/rice-diseases-image-dataset)
+- [OpenVINO installation guide](https://docs.openvinotoolkit.org/latest/_docs_install_guides_installing_openvino_raspbian.html)
