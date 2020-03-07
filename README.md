@@ -61,7 +61,7 @@ For run the application, you can use the following command:
 ```bash
 source /opt/intel/openvino/bin/setupvars.sh
 
-python3 sneeze-cough.py [-h] [-p P] [-i I] [-d D]
+python3 rice_diseases.py [-h] [-p P] [-i I] [-d D]
 
 The optional arguments are:
   -h, --help  show this help message and exit
