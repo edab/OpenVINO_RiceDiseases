@@ -23,7 +23,7 @@ The first attempt was using DenseNet 201 (learning rate of 0.01) and froze all t
 ```
 # Freeze training for all 'features' layers
 for param in model_transfer.features.parameters():
-    param.requires_grad=False
+    param.requires_grad=True
 ```
 Set the param.requires_grad to True and the accuracy increased to 80%. In this competition, we submitted the training model using GoogleNet, as it has the highest accuracy of 97%.
 
