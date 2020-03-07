@@ -51,8 +51,24 @@ The current application is able to infer on single images and write the class id
 
 ## Quickstart
 
+This tool is based on Python3 and OpenVINO toolkit, you can use the [original guide from Intel](https://docs.openvinotoolkit.org/latest/_docs_install_guides_installing_openvino_raspbian.html) for install it.
 
+
+## Usage
+
+For run the application, you can use the following command:
+
+```bash
+source /opt/intel/openvino/bin/setupvars.sh
+
+python3 sneeze-cough.py [-h] [-p P] [-i I] [-d D]
+
+The optional arguments are:
+  -h, --help  show this help message and exit
+  -p P        The location of the input file (default: random image from dataset)
+  -i I        The type of input: 0 = camera, 'IMAGE', 'VIDEO' (default: 'IMAGE')
+  -d D        Target device: CPU, GPU, FPGA, MYRIAD, MULTI:CPU,GPU, HETERO:FPGA, CPU (default: 'CPU')
+```
 
 ## References
 - [Kaggle rice diseases dataset](https://www.kaggle.com/minhhuy2810/rice-diseases-image-dataset)
-- [OpenVINO installation guide](https://docs.openvinotoolkit.org/latest/_docs_install_guides_installing_openvino_raspbian.html)

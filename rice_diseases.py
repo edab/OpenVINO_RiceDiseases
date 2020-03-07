@@ -61,7 +61,7 @@ def get_args():
     d_desc = "Target device: CPU, GPU, FPGA, MYRIAD, MULTI:CPU,GPU, HETERO:FPGA,CPU (default: 'CPU')"
 
     # Create the arguments
-    parser.add_argument("-p", help=i_desc, default=IMGS[random.randint(0,3)])
+    parser.add_argument("-p", help=p_desc, default=IMGS[random.randint(0,3)])
     parser.add_argument("-i", help=i_desc, default='IMAGE')
     parser.add_argument("-d", help=d_desc, default='CPU')
     args = parser.parse_args()
