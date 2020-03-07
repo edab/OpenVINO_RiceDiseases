@@ -18,7 +18,7 @@ Although the _OpenVINO™ Toolkit_ comes with a large number of pre-trained and 
 ### Transfer Learning with PyTorch Framework
 The size of the dataset is 3355. The dataset was splitted into training dataset 80%(2684), validation 10%(335), and testing 10%(336).
 
-The first attempt was using DenseNet 201 (learning rate of 0.01) and froze all the weights from the pretrained network. The accuracy was very poor, around 50%. Then, with another model, VGG16 (learning rate 0.01) and froze all the weights from the pretrained network, accuracy was 39%. ResNet 50 showed the same poor accuracy of 50%. It showed that the dataset is totally different from original image database. To improve the accuracy, the weight parameter of the pretrained network was not frozen. 
+The first attempt was using DenseNet 201 (learning rate of 0.01) and froze all the weights from the pretrained network. The accuracy was very poor, around 50%. Then, with another model, VGG16 (learning rate 0.01) and froze all the weights from the pretrained network, accuracy was 39%. ResNet 50 showed the same poor accuracy of 50%. It showed that the dataset is totally different from original training image database. To improve the accuracy, we need to retrain the network from scratch with randomly initialized weights. 
 
 ```
 # Freeze training for all 'features' layers
