@@ -138,7 +138,7 @@ def pre_process(image, C, W, H):
 
 def run_app(args):
 
-    classes = ['Brown spot', 'Hispa', 'Leaf blast', 'Healty']
+    classes = ['Brown spot', 'Hispa', 'Leaf blast', 'None']
 
     random.seed(time.time())
 
@@ -183,9 +183,9 @@ def run_app(args):
         fw = image.shape[1]
 
         # Write Information on Image
-        imS = cv2.resize(image, (960, 540))                    # Resize image
-        text = 'Inf: {} ms, Disease: {}'.format(round(inf_time, 1), classes[index])
-        cv2.putText(imS, text, (0, 20), cv2.FONT_HERSHEY_COMPLEX, 0.6, (0, 125, 255), 1)
+        imS = cv2.resize(image, (540, 540))                    # Resize image
+        text = 'Disease: {} [{} ms]'.format(classes[index], round(inf_time, 1))
+        cv2.putText(imS, text, (20, 40), cv2.FONT_HERSHEY_TRIPLEX, 0.7, (40, 40, 40), 1, cv2.LINE_AA) # No more (0, 125, 255)
 
         # Show original image and prediction
         cv2.namedWindow("OpenVINO Rice Diseases")         # Create a named window
