@@ -90,7 +90,7 @@ The optional arguments are:
 
 In this work, we demonstrated that we can pick a domain-specific problem (for which there might not exist pretrained models within the OpenVINO toolkit), train a model to help address the problem, and then deploy an app that infers field cases using the OpenVINO Toolkit. Our proof-of-concept uses the CPU, and static images.
 
-The first natural extension to this endeavor is to enhance our app to accept an input video stream, and classify the different diseases for a rice plant on a farm.
+The first natural extension to this endeavor is to enhance our app to accept an input video stream, which would enable a more robust response to practical use-cases such as on a farm.
 
 The backend work for this would involve enhancing the inference code to process video streams, and also an update on the training side to add a "not rice" category to be able to classify all the frames that do not have a rice plant in them. After that, the number of diseased plants, the kinds of disease, and more such statistics can be reported out.
 
